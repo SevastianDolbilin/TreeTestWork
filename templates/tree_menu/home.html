@@ -1,0 +1,55 @@
+{% extends 'tree_menu/base.html' %}
+{% load menu_tags %}
+
+{% block title %}Главная страница - Древовидное меню{% endblock %}
+
+{% block sidebar %}
+{% draw_menu 'main_menu' %}
+{% draw_menu 'secondary_menu' %}
+{% endblock %}
+
+{% block content %}
+<h1>Добро пожаловать в демонстрацию древовидного меню!</h1>
+
+<div class="content">
+    <p>Это демонстрационная страница для показа работы древовидного меню Django. Меню в левой панели автоматически
+        определяет активный пункт по текущему URL.</p>
+
+    <h2>Возможности системы:</h2>
+    <ul>
+        <li><strong>Древовидная структура:</strong> Поддержка неограниченной вложенности пунктов меню</li>
+        <li><strong>Автоматическое определение активного пункта:</strong> По текущему URL</li>
+        <li><strong>Автоматическое разворачивание:</strong> Активная ветка и её предки автоматически разворачиваются
+        </li>
+        <li><strong>Поддержка URL и named URL:</strong> Можно использовать как обычные URL, так и именованные URL Django
+        </li>
+        <li><strong>Оптимизация запросов:</strong> Один запрос к БД на меню с prefetch_related</li>
+        <li><strong>Кеширование:</strong> Результаты кешируются для повышения производительности</li>
+        <li><strong>Несколько меню на странице:</strong> Можно использовать несколько меню одновременно</li>
+    </ul>
+
+    <h2>Примеры использования:</h2>
+
+    <h3>Одно меню:</h3>
+    <pre><code>{% draw_menu 'main_menu' %}</code></pre>
+
+    <h3>Несколько меню:</h3>
+    <pre><code>{% draw_menu 'main_menu' %}
+{% draw_menu 'sidebar_menu' %}
+{% draw_menu 'categories_menu' %}</code></pre>
+
+    <h2>Демонстрация нескольких меню:</h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+        <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px;">
+            <h3>Основное меню</h3>
+            {% draw_menu 'main_menu' %}
+        </div>
+
+        <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px;">
+            <h3>Дополнительное меню</h3>
+            {% draw_menu 'main_menu' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

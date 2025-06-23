@@ -1,0 +1,16 @@
+{% extends "tree_menu/base.html" %}
+{% load menu_tags %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block sidebar %}
+{% draw_menu 'main_menu' %}
+{% draw_menu 'secondary_menu' %}
+{% endblock %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<div class="content">
+    <p>{{ content }}</p>
+</div>
+{% endblock %}

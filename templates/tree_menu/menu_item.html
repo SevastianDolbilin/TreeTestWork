@@ -1,0 +1,27 @@
+{% load menu_tags %}
+
+<li
+    class="menu-item {% if item.id in expanded_items %}expanded{% endif %} {% if item.children.all %}has-children{% endif %}">
+    <a href="{{ item.get_url }}"
+        class="menu-link {% if item.id == active_item.id %}active{% endif %} {% if item.id in expanded_items %}expanded{% endif %}"
+        {% if item.id == active_item.id %}aria-current="page"{% endif %}>
+
+        {% if item.children.all %}
+        <span class="menu-toggle" title="Развернуть/свернуть">
+            {% if item.id in expanded_items %}▼{% else %}▶{% endif %}
+        </span>
+        {% endif %}
+
+        {{ item.title }}
+    </a>
+
+    {% if item.children.all %}
+    <ul class="menu-children" {% if item.id not in expanded_items %}style="display: none;"{% endif %}>
+        {% for child in item.children.all %}
+        {% if child.is_active %}
+        {% include "tree_menu/menu_item.html" with item=child level=level|add:1 %}
+        {% endif %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+</li>

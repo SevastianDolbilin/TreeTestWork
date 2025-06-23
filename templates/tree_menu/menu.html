@@ -1,0 +1,272 @@
+{% if menu %}
+<div class="tree-menu" id="menu-{{ menu.name|slugify }}">
+    <h3>{{ menu.name }}</h3>
+    {% if menu.description %}
+    <p class="menu-description">{{ menu.description }}</p>
+    {% endif %}
+
+    <ul class="menu-root">
+        {% for item in menu_tree %}
+        {% if not item.parent %}
+        {% include "tree_menu/menu_item.html" with item=item level=0 %}
+        {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+
+<style>
+    .tree-menu {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 20px 0;
+    }
+
+    .tree-menu h3 {
+        margin: 0 0 15px 0;
+        color: #ffffff;
+        border-bottom: 2px solid #64b5f6;
+        padding-bottom: 10px;
+        font-size: 1.3em;
+        font-weight: 400;
+    }
+
+    .menu-description {
+        color: #b0bec5;
+        font-size: 14px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    .menu-root {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .menu-item {
+        margin: 3px 0;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .menu-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .menu-link {
+        display: block;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #e8e8e8;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .menu-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.5s;
+    }
+
+    .menu-link:hover::before {
+        left: 100%;
+    }
+
+    .menu-link:hover {
+        background: rgba(100, 181, 246, 0.1);
+        color: #ffffff;
+        border-color: rgba(100, 181, 246, 0.3);
+        transform: translateX(5px);
+    }
+
+    .menu-link.active {
+        background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+        color: #ffffff;
+        font-weight: 500;
+        box-shadow: 0 4px 15px rgba(100, 181, 246, 0.4);
+        border-color: #64b5f6;
+    }
+
+    .menu-link.expanded {
+        background: rgba(100, 181, 246, 0.15);
+        border-left: 3px solid #64b5f6;
+        color: #ffffff;
+    }
+
+    .menu-children {
+        list-style: none;
+        padding-left: 25px;
+        margin: 8px 0;
+        border-left: 2px solid rgba(100, 181, 246, 0.3);
+        position: relative;
+    }
+
+    .menu-children::before {
+        content: '';
+        position: absolute;
+        left: -2px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(to bottom, #64b5f6, transparent);
+    }
+
+    .menu-children .menu-children {
+        padding-left: 20px;
+        border-left-color: rgba(100, 181, 246, 0.2);
+    }
+
+    .menu-toggle {
+        cursor: pointer;
+        margin-right: 8px;
+        color: #64b5f6;
+        font-weight: bold;
+        font-size: 12px;
+        transition: all 0.3s ease;
+        display: inline-block;
+        width: 16px;
+        text-align: center;
+    }
+
+    .menu-toggle:hover {
+        color: #ffffff;
+        transform: scale(1.2);
+    }
+
+    .menu-item.has-children>.menu-link {
+        font-weight: 500;
+        position: relative;
+    }
+
+    .menu-item.has-children>.menu-link::after {
+        content: '';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid rgba(100, 181, 246, 0.6);
+        transition: transform 0.3s ease;
+    }
+
+    .menu-item.expanded>.menu-link::after {
+        transform: translateY(-50%) rotate(180deg);
+    }
+
+    /* Анимации для разворачивания */
+    .menu-children {
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .menu-children[style*="display: none"] {
+        max-height: 0;
+        opacity: 0;
+    }
+
+    .menu-children:not([style*="display: none"]) {
+        max-height: 1000px;
+        opacity: 1;
+    }
+
+    /* Эффект свечения для активных элементов */
+    .menu-link.active {
+        animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+        from {
+            box-shadow: 0 4px 15px rgba(100, 181, 246, 0.4);
+        }
+
+        to {
+            box-shadow: 0 4px 20px rgba(100, 181, 246, 0.6);
+        }
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+        .menu-children {
+            padding-left: 20px;
+        }
+
+        .menu-link {
+            padding: 10px 14px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Добавляем обработчики для сворачивания/разворачивания меню
+        const menuToggles = document.querySelectorAll('.menu-toggle');
+
+        menuToggles.forEach(function (toggle) {
+            toggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const menuItem = this.closest('.menu-item');
+                const children = menuItem.querySelector('.menu-children');
+                const link = menuItem.querySelector('.menu-link');
+
+                if (children) {
+                    const isExpanded = children.style.display !== 'none';
+
+                    if (isExpanded) {
+                        children.style.display = 'none';
+                        this.textContent = '▶';
+                        link.classList.remove('expanded');
+                        menuItem.classList.remove('expanded');
+                    } else {
+                        children.style.display = 'block';
+                        this.textContent = '▼';
+                        link.classList.add('expanded');
+                        menuItem.classList.add('expanded');
+                    }
+
+                    // Добавляем анимацию
+                    if (!isExpanded) {
+                        children.style.maxHeight = '0';
+                        children.style.opacity = '0';
+                        setTimeout(() => {
+                            children.style.maxHeight = '1000px';
+                            children.style.opacity = '1';
+                        }, 10);
+                    }
+                }
+            });
+        });
+
+        // Добавляем эффект при наведении на родительские элементы
+        const menuItems = document.querySelectorAll('.menu-item.has-children');
+        menuItems.forEach(function (item) {
+            item.addEventListener('mouseenter', function () {
+                if (!this.classList.contains('expanded')) {
+                    this.style.background = 'rgba(100, 181, 246, 0.05)';
+                }
+            });
+
+            item.addEventListener('mouseleave', function () {
+                if (!this.classList.contains('expanded')) {
+                    this.style.background = 'transparent';
+                }
+            });
+        });
+    });
+</script>
+{% else %}
+<div class="tree-menu-error">
+    <p>Меню "{{ menu_name }}" не найдено.</p>
+</div>
+{% endif %}
